@@ -33,15 +33,6 @@ commands:
         kind: build
         isDefault: true
 
-  - id: run
-    exec:
-      component: java-tools
-      commandLine: ./mvnw mn:run
-      workingDir: ${PROJECT_SOURCE}
-      group:
-        kind: run
-        isDefault: true
-
   - id: test
     exec:
       component: java-tools
@@ -49,13 +40,4 @@ commands:
       workingDir: ${PROJECT_SOURCE}
       group:
         kind: test
-        isDefault: true
-
-  - id: debug
-    exec:
-      component: java-tools
-      commandLine: ./mvnw mn:run -Dmn.debug
-      workingDir: ${PROJECT_SOURCE}
-      group:
-        kind: debug
         isDefault: true
