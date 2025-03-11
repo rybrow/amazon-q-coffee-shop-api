@@ -1,0 +1,17 @@
+inputs:
+  prompt: 
+    description: 'Prompt to give Amazon Q /dev command'  # id of input
+    required: true
+runs:
+  using: "composite"
+  steps:
+      - name: Amazon Q Login Check
+        shell: bash
+        run: |
+          mv /root/.local $HOME
+          echo "/help" | q chat
+
+      - name: Amazon Q Develop Initial Feature
+        shell: bash
+        if: github.event_name != 'issue_comment'
+        run: q chat -a -- "--command \"/dev ${{ inputs.prompt }}\""
