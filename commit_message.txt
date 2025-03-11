@@ -1,11 +1,13 @@
-Add H2 In Memory Database and Liquibase Support
+feat: Add H2 Database and Liquibase Support
 
-- Added H2 database dependency for local testing
-- Integrated Liquibase for database schema management
-- Created initial database schema with tables for Coffee, Orders, and OrderItems
-- Added sample data for coffee products
-- Created entity models with JPA annotations
-- Implemented repositories for data access
-- Added REST controllers for Coffee and Order management
-- Created unit tests for API endpoints
-- Added devfile for development environment setup
+- Configure H2 in-memory database for local development
+- Add Liquibase for database schema management
+- Create initial schema with products, orders, and order_items tables
+- Implement JPA entities and repositories
+- Configure Micronaut Data JPA integration
+
+This commit sets up the database infrastructure for the Coffee Shop API, enabling:
+- Local development with H2 in-memory database
+- Version-controlled schema management with Liquibase
+- Basic data model for coffee shop operations
+- Repository layer for data access

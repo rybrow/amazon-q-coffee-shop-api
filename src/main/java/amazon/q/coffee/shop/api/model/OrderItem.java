@@ -2,69 +2,71 @@ package amazon.q.coffee.shop.api.model;
 
 import io.micronaut.serde.annotation.Serdeable;
 import jakarta.persistence.*;
-import java.time.Instant;
+
+import java.math.BigDecimal;
+import java.util.UUID;
 
 @Serdeable
 @Entity
-@Table(name = "order_item")
+@Table(name = "order_items")
 public class OrderItem {
-
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @GeneratedValue
+    private UUID id;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
-    private CoffeeOrder order;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "coffee_id", nullable = false)
-    private Coffee coffee;
-
+    private Order order;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+    
     @Column(nullable = false)
-    private Integer quantity = 1;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt = Instant.now();
-
+    private Integer quantity;
+    
+    @Column(name = "unit_price", nullable = false)
+    private BigDecimal unitPrice;
+    
     // Getters and Setters
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
-
-    public void setId(Long id) {
+    
+    public void setId(UUID id) {
         this.id = id;
     }
-
-    public CoffeeOrder getOrder() {
+    
+    public Order getOrder() {
         return order;
     }
-
-    public void setOrder(CoffeeOrder order) {
+    
+    public void setOrder(Order order) {
         this.order = order;
     }
-
-    public Coffee getCoffee() {
-        return coffee;
+    
+    public Product getProduct() {
+        return product;
     }
-
-    public void setCoffee(Coffee coffee) {
-        this.coffee = coffee;
+    
+    public void setProduct(Product product) {
+        this.product = product;
     }
-
+    
     public Integer getQuantity() {
         return quantity;
     }
-
+    
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
-
-    public Instant getCreatedAt() {
-        return createdAt;
+    
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
     }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
+    
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
     }
 }
