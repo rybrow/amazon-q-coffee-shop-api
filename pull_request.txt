@@ -1,0 +1,29 @@
+# Add H2 Database and Liquibase Support
+
+## Description
+This PR implements the requirements from issue #1 to add H2 in-memory database and Liquibase support to the Coffee Shop API. These additions will enable better data management and local testing capabilities.
+
+## Changes Made
+- Added H2 database dependency for local development and testing
+- Added Micronaut Data JPA for database access
+- Configured Liquibase for database schema management
+- Created initial database schema with tables for:
+  - Products (coffee, food items)
+  - Orders
+  - Order Items
+- Added H2 console configuration for easy database inspection during development
+- Updated application properties with database configuration
+- Added devfile for consistent development environment
+
+## How to Test
+1. Run the application using `./mvnw mn:run`
+2. Access the H2 console at http://localhost:8080/h2-console
+   - JDBC URL: jdbc:h2:mem:coffeedb
+   - Username: sa
+   - Password: (leave empty)
+3. Verify that the database tables have been created according to the Liquibase changelog
+
+## Additional Notes
+- The H2 database is configured as in-memory, so data will be lost when the application restarts
+- Liquibase is set up to manage schema changes, making it easy to evolve the database structure
+- The initial schema includes basic tables needed for a coffee shop application

@@ -1,0 +1,8 @@
+feat: Add H2 Database and Liquibase Support
+
+- Add H2 database dependency for local development and testing
+- Configure Liquibase for database schema management
+- Add initial database schema with tables for products, orders, and order items
+- Configure H2 console for development purposes
+- Update application properties with database configuration
+- Add devfile for consistent development environment
