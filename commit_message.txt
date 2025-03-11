@@ -1,0 +1,11 @@
+Add H2 In Memory Database and Liquibase Support
+
+- Added H2 database dependency for local testing
+- Integrated Liquibase for database schema management
+- Created initial database schema with tables for Coffee, Orders, and OrderItems
+- Added sample data for coffee products
+- Created entity models with JPA annotations
+- Implemented repositories for data access
+- Added REST controllers for Coffee and Order management
+- Created unit tests for API endpoints
+- Added devfile for development environment setup

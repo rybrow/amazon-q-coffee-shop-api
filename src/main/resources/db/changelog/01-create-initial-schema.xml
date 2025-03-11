@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.5.xsd">
+
+    <changeSet id="01-create-coffee-table" author="amazon-q">
+        <createTable tableName="coffee">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(1000)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="02-create-order-table" author="amazon-q">
+        <createTable tableName="coffee_order">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="customer_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(50)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="03-create-order-item-table" author="amazon-q">
+        <createTable tableName="order_item">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="order_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_order_item_order" references="coffee_order(id)"/>
+            </column>
+            <column name="coffee_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_order_item_coffee" references="coffee(id)"/>
+            </column>
+            <column name="quantity" type="INT" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="04-insert-sample-coffee-data" author="amazon-q">
+        <insert tableName="coffee">
+            <column name="name" value="Espresso"/>
+            <column name="price" value="3.50"/>
+            <column name="description" value="Strong black coffee made by forcing steam through ground coffee beans"/>
+        </insert>
+        <insert tableName="coffee">
+            <column name="name" value="Cappuccino"/>
+            <column name="price" value="4.50"/>
+            <column name="description" value="Coffee made with milk that has been frothed up with pressurized steam"/>
+        </insert>
+        <insert tableName="coffee">
+            <column name="name" value="Latte"/>
+            <column name="price" value="4.00"/>
+            <column name="description" value="Coffee made with hot steamed milk, served with a layer of milk foam"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
