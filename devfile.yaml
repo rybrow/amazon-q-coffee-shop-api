@@ -3,41 +3,50 @@ metadata:
   name: amazon-q-coffee-shop-api
   version: 1.0.0
   displayName: Coffee Shop API
-  description: Coffee Shop API with H2 Database and Liquibase support
+  description: Coffee Shop API with OpenAPI/Swagger support
   tags:
     - Java
-    - Maven
     - Micronaut
-    - H2
-    - Liquibase
-
+    - OpenAPI
+  projectType: Maven
 components:
-  - name: java-tools
+  - name: maven
     container:
-      image: eclipse-temurin:21-jdk
+      image: maven:3.9-eclipse-temurin-21
       memoryLimit: 2Gi
       mountSources: true
-      env:
-        - name: JAVA_HOME
-          value: /opt/java/openjdk
-        - name: MAVEN_OPTS
-          value: "-XX:MaxRAMPercentage=75.0"
-
+      volumeMounts:
+        - name: m2
+          path: /root/.m2
+      endpoints:
+        - name: http-8080
+          targetPort: 8080
+  - name: m2
+    volume:
+      size: 1Gi
 commands:
   - id: build
     exec:
-      component: java-tools
-      commandLine: ./mvnw clean package
+      component: maven
+      commandLine: mvn clean package
       workingDir: ${PROJECT_SOURCE}
-      group:
-        kind: build
-        isDefault: true
-
+  - id: run
+    exec:
+      component: maven
+      commandLine: mvn mn:run
+      workingDir: ${PROJECT_SOURCE}
   - id: test
     exec:
-      component: java-tools
-      commandLine: ./mvnw test
+      component: maven
+      commandLine: mvn test
       workingDir: ${PROJECT_SOURCE}
-      group:
-        kind: test
-        isDefault: true
+  - id: debug
+    exec:
+      component: maven
+      commandLine: mvn mn:run -Dmn.debug
+      workingDir: ${PROJECT_SOURCE}
+  - id: swagger-ui
+    exec:
+      component: maven
+      commandLine: echo "Swagger UI available at http://localhost:8080/swagger-ui/"
+      workingDir: ${PROJECT_SOURCE}
