@@ -1,52 +1,60 @@
 schemaVersion: 2.2.0
 metadata:
   name: amazon-q-coffee-shop-api
-  version: 1.0.0
   displayName: Coffee Shop API
-  description: Coffee Shop API with OpenAPI/Swagger support
+  description: A Java API for a coffee shop
   tags:
     - Java
     - Micronaut
-    - OpenAPI
-  projectType: Maven
+    - API
+  projectType: Java
+  language: Java
+  version: 1.0.0
+
 components:
-  - name: maven
+  - name: tools
     container:
-      image: maven:3.9-eclipse-temurin-21
+      image: eclipse-temurin:17-jdk
       memoryLimit: 2Gi
       mountSources: true
-      volumeMounts:
-        - name: m2
-          path: /root/.m2
-      endpoints:
-        - name: http-8080
-          targetPort: 8080
-  - name: m2
-    volume:
-      size: 1Gi
+      command: ['sleep', 'infinity']
+      env:
+        - name: JAVA_HOME
+          value: /opt/java/openjdk
+
 commands:
   - id: build
     exec:
-      component: maven
-      commandLine: mvn clean package
+      component: tools
+      commandLine: ./mvnw clean package
       workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: build
+        isDefault: true
+
   - id: run
     exec:
-      component: maven
-      commandLine: mvn mn:run
+      component: tools
+      commandLine: java -jar target/amazon-q-coffee-shop-api-0.1.jar
       workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: run
+        isDefault: true
+
   - id: test
     exec:
-      component: maven
-      commandLine: mvn test
+      component: tools
+      commandLine: ./mvnw test
       workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: test
+        isDefault: true
+
   - id: debug
     exec:
-      component: maven
-      commandLine: mvn mn:run -Dmn.debug
+      component: tools
+      commandLine: java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -jar target/amazon-q-coffee-shop-api-0.1.jar
       workingDir: ${PROJECT_SOURCE}
-  - id: swagger-ui
-    exec:
-      component: maven
-      commandLine: echo "Swagger UI available at http://localhost:8080/swagger-ui/"
-      workingDir: ${PROJECT_SOURCE}
+      group:
+        kind: debug
+        isDefault: true
