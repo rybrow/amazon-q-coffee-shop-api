@@ -42,6 +42,14 @@ public class Product {
     public Product() {
         this.id = UUID.randomUUID();
     }
+    
+    public Product(UUID id, String name, String description, BigDecimal price, String category) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.category = category;
+    }
 
     public UUID getId() {
         return id;
