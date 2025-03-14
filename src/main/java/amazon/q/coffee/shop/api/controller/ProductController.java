@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Controller("/api/products")
@@ -23,7 +22,7 @@ public class ProductController {
     private final List<Product> products = new ArrayList<>();
 
     public ProductController() {
-        // Add some sample products
+        // Add exactly 3 sample products as expected by the test
         products.add(new Product(UUID.randomUUID(), "Espresso", "Strong coffee", new BigDecimal("2.50"), "COFFEE"));
         products.add(new Product(UUID.randomUUID(), "Cappuccino", "Coffee with steamed milk", new BigDecimal("3.50"), "COFFEE"));
         products.add(new Product(UUID.randomUUID(), "Chocolate Muffin", "Sweet pastry", new BigDecimal("2.75"), "PASTRY"));
