@@ -3,6 +3,7 @@ package amazon.q.coffee.shop.api.controller;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.serde.annotation.Serdeable;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,6 +40,7 @@ public class HelloController {
         return new HelloResponse(String.format("Hello %s from Coffee Shop API!", name));
     }
 
+    @Serdeable
     public static class HelloResponse {
         private final String message;
 
