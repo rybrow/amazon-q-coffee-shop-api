@@ -2,7 +2,6 @@ name: AI Review of Merge Request
 
 on:
   pull_request:
-    types: [opened]
     branches:
       - main
 
