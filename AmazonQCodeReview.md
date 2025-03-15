@@ -52,12 +52,8 @@ So, lets see how it runs??
 Turns out, by default. Not well... We need to login!
 
 ```
-2025-03-15T08:03:44.5910494Z ##[group]Run q chat "Hello Amazon Q! What capabilities do you offer??"
-2025-03-15T08:03:44.5910954Z [36;1mq chat "Hello Amazon Q! What capabilities do you offer??"[0m
-2025-03-15T08:03:44.5958960Z shell: /usr/bin/bash -e {0}
-2025-03-15T08:03:44.5959177Z ##[endgroup]
-2025-03-15T08:03:45.3576161Z error: You are not logged in, please log in with q login
-2025-03-15T08:03:45.3609409Z ##[error]Process completed with exit code 1.
+Run q chat "Hello Amazon Q! What capabilities do you offer??"
+error: You are not logged in, please log in with q login
 ```
 
 ### Persisting the Authentication with Amazon Q Developer
@@ -136,6 +132,8 @@ on:
   pull_request:
     branches:
       - main
+permissions:
+  id-token: write
 jobs:
   AmazonQCodeReview:
     runs-on: ubuntu-latest
@@ -156,4 +154,92 @@ jobs:
         run: aws s3 sync s3://<amazon-q-bucket>/authentication ~/.local/share/amazon-q/
       - name: Run Amazon Q
         run: q chat "Hello Amazon Q! What capabilities do you offer??"
+```
+
+The output from the "Run Amazon Q" step should show something similar to the following now.
+
+```
+Hello Amazon Q! What capabilities do you offer??
+Hello! I'm Amazon Q, an AI assistant built by AWS to help you with various
+tasks. Here are my key capabilities:
+
+• I can interact with your local filesystem to read, write, and list files or
+directories
+• I can execute bash commands on your system
+• I can make AWS CLI calls to manage and query AWS resources
+• I provide AWS and software-focused assistance and recommendations
+• I can help with infrastructure code and configurations
+• I can guide you on best practices for AWS services
+• I can analyze and optimize resource usage
+• I can troubleshoot issues and errors
+• I can assist with CLI commands and automation tasks
+• I can write and modify software code
+• I can help test and debug software
+
+I'm designed to be practical and provide actionable information. Is there
+something specific you'd like help with today?
+(To exit, press Ctrl+C or Ctrl+D again or type /quit)
+```
+
+### Running Slash Commands via the Amazon Q CLI
+
+To invoke slash commands via the amaozn Q cli we need to run the `q chat` command in a special format
+
+    q chat -- "--command /\<command> \<prompt>"
+
+e.g
+
+    q chat -- "--command /review Do a code review for any Critical, or High security issues in my workspace"
+
+however running this leads to a prompt in the Amazon Q context. e.g
+
+```
+Let me check if there are any controllers or services in the application:
+
+
+
+Execute shell command
+▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+I will run the following shell command:
+find /mnt/d/Work/Rybrow/amazon-q-coffee-shop-api/src/main/java -type f -name "*.java" | grep -v "model"
+
+Enter y to run this tool, otherwise continue chatting.
+```
+
+This isnt' compatible with the CI/CD pipeline as its non-interactive so we need to use the --accept-all flag to 'Auto Approve'any commands to be run.
+
+So, the command we run in Github Actions is.
+
+    q chat --accept-all -- "--command /review Do a code review for any Critical, or High security issues in my workspace"
+
+Now our github actions pipeline looks like this!
+
+``` yaml
+name: Amazon Q Pipeline
+on:
+  pull_request:
+    branches:
+      - main
+permissions:
+  id-token: write
+jobs:
+  AmazonQCodeReview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install Amazon Q
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://desktop-release.q.us-east-1.amazonaws.com/latest/amazon-q.deb -o amazon-q.deb
+          sudo apt install -y ./amazon-q.deb
+          rm amazon-q.deb
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::<account-id>:role/<your-github-actions-role>
+          aws-region: <your-region>
+      - name: Pull Amazon Q Authentication
+        run: aws s3 sync s3://<amazon-q-bucket>/authentication ~/.local/share/amazon-q/
+      - name: Run Amazon Q
+        run: q chat --accept-all -- "--command /review Do a code review for any Critical, or High security issues in my workspace"
 ```

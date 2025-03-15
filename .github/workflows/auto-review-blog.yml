@@ -26,4 +26,4 @@ jobs:
       - name: Pull Amazon Q Authentication
         run: aws s3 sync s3://rybrow-amazon-q-cicd-blog/authentication ~/.local/share/amazon-q/
       - name: Run Amazon Q
-        run: q chat "Hello Amazon Q! What capabilities do you offer??"
+        run: q chat --accept-all -- "--command /review Do a code review for any Critical, or High security issues in my workspace"
