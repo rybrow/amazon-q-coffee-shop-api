@@ -1,0 +1,76 @@
+name: AI Review of Merge Request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  id-token: read
+
+jobs:
+  AmazonQCodeReview:
+    runs-on: ubuntu-latest
+    env:
+      prompt: |
+        Please do a code review and update any CRITICAL or HIGH security issues, as well as any lack of logging, and any potential runtime errors.
+        The file paths to review are located in changes.txt. Do not review files that are not in the changes.txt file.
+
+        When you are done:
+        Put an appropriate commit message in the "commit_message.txt"
+        Put your Review notes in "review_notes.txt"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::861276113617:role/RybrowGithubActionsRole
+          aws-region: ap-southeast-2
+      - name: Get Updated Files
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr view ${{ github.event.pull_request.number }} --json files -q '.files[].path' >> changes.txt
+          cat changes.txt
+      - name: Review Feature
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://desktop-release.q.us-east-1.amazonaws.com/latest/amazon-q.deb -o amazon-q.deb
+          sudo apt install -y ./amazon-q.deb
+          rm amazon-q.deb
+          aws s3 sync s3://rybrow-amazon-q-cache/rybrow ~/.local/share/amazon-q
+          echo "/help" | q chat
+          q chat -a -- "--command /review ${{ env.prompt }}"
+          cat review_notes.txt
+          cat commit_message.txt
+
+      # - name: Commit and push changes
+      #   run: |
+      #     commit_message=$(cat commit_message.txt)
+      #     git config --global user.email "amazon-q-bot@users.noreply.github.com"
+      #     git config --global user.name "Amazon Q Bot"
+      #     git add .
+      #     git commit -m "#${{ github.event.issue.number }}: ${commit_message}"
+      #     git push origin "issue-${{ github.event.issue.number }}"
+
+      # - name: Create Pull Request if not exists
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     PR_EXISTS=$(gh pr list --head issue-${{ github.event.issue.number }} --json number -q '.[].number')
+      #     if [ -z "$PR_EXISTS" ]; then
+      #       PR_BODY=$(cat pull_request.txt)
+      #       gh pr create --title "Resolve issue #${{ github.event.issue.number }}" \
+      #         --body "$PR_BODY" \
+      #         --head "issue-${{ github.event.issue.number }}"
+      #     fi
+
+      # - name: Mark as ready for review
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     gh issue edit ${{ github.event.issue.number }} --remove-label "in-progress"
+      #     gh issue edit ${{ github.event.issue.number }} --add-label "ready-for-review" || "Already in progress"
