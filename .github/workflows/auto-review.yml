@@ -41,7 +41,7 @@ jobs:
       - name: Review Feature
         run: |
           curl --proto '=https' --tlsv1.2 -sSf https://desktop-release.q.us-east-1.amazonaws.com/latest/amazon-q.deb -o amazon-q.deb
-          apt install -y ./amazon-q.deb
+          sudo apt install -y ./amazon-q.deb
           rm amazon-q.deb
           mkdir -P ~/.local/share/amazon-q || echo "Q Directory exists"
           aws s3 sync s3://rybrow-amazon-q-cache/rybrow ~/.local/share/amazon-q
