@@ -17,13 +17,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       prompt: |
-        As a Backend Java Developer, Develop a feature that fits the requirements in issue_content.txt
-        You have the openjdk 17 and maven available to you If needed, generate a new project with the appropriate name, and archetype and install the relevant dependencies.
-        Generate the relevant devfile to run the project.
+        Please do a code review and update any CRITICAL or HIGH security issues, as well as any lack of logging, and any potential runtime errors.
+        The file paths to review are located in changes.txt. Do not review files that are not in the changes.txt file.
 
         When you are done:
         Put an appropriate commit message in the "commit_message.txt"
-        Put your pull request notes in "pull_request.txt"
+        Put your Review notes in "review_notes.txt"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -43,9 +42,11 @@ jobs:
           curl --proto '=https' --tlsv1.2 -sSf https://desktop-release.q.us-east-1.amazonaws.com/latest/amazon-q.deb -o amazon-q.deb
           sudo apt install -y ./amazon-q.deb
           rm amazon-q.deb
-          mkdir -P ~/.local/share/amazon-q || echo "Q Directory exists"
           aws s3 sync s3://rybrow-amazon-q-cache/rybrow ~/.local/share/amazon-q
           echo "/help" | q chat
+          q chat -a -- "--command /review ${{ env.prompt }}"
+          cat review_notes.txt
+          cat commit_message.txt
 
       # - name: Commit and push changes
       #   run: |
