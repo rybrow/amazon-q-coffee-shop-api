@@ -5,7 +5,7 @@ on:
       - main
 
 permissions:
-  id-token: read
+  id-token: write
 
 jobs:
   AmazonQCodeReview:
