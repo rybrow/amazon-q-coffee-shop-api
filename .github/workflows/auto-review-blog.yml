@@ -1,0 +1,18 @@
+name: Amazon Q Pipeline
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  AmazonQCodeReview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install Amazon Q
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://desktop-release.q.us-east-1.amazonaws.com/latest/amazon-q.deb -o amazon-q.deb
+          sudo apt install -y ./amazon-q.deb
+          rm amazon-q.deb
+      - name: Run Amazon Q
+        run: q chat "Hello Amazon Q! What capabilities do you offer??"

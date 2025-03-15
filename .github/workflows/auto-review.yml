@@ -6,11 +6,10 @@ on:
       - main
 
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
-  id-token: write
-  actions: write
+  contents: read
+  issues: read
+  pull-requests: read
+  id-token: read
 
 jobs:
   AmazonQCodeReview:
